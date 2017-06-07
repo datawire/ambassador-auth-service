@@ -4,9 +4,15 @@ const app = express()
 
 const parser = bodyParser.json()
 
+function reject (res) {
+  res.set('WWW-Authenticate', 'Basic realm="Ambassador Realm"')
+  res.status(401).end()
+}
+
 app.post('/post', parser, function (req, res) {
   // Headers we look at to figure out auth
   const headers = req.body
+  console.log('\nNew request with ' + Object.keys(headers).length + ' headers.')
 
   // Does this call need auth?
   const path = headers[':path']
@@ -16,16 +22,31 @@ app.post('/post', parser, function (req, res) {
     return
   }
 
+  // FUTURE: Check for and validate JWT in some header
+
+  // Does this call have an basic auth header?
   const auth = headers['authorization']
   console.log('Got auth [' + auth + ']')
   if (!auth || !auth.startsWith('Basic ')) {
-    res.set('WWW-Authenticate', 'Basic realm="Ambassador Realm"')
-    res.status(401).end()
-    return
+    return reject(res)
   }
 
-  // FUTURE: Check for JWT in some header
-  // FUTURE:   Pass, then return 200
+  // Does the header contain a username and password?
+  const userpass = Buffer.from(auth.slice(6), 'base64').toString()
+  const splitIdx = userpass.search(':')
+  console.log('Auth decodes to [' + userpass + ']')
+  if (splitIdx < 1) {
+    // No colon or empty username
+    return reject(res)
+  }
+
+  // Is the username and password pair valid?
+  // TODO(ark3): Validate properly!
+  const username = userpass.slice(0, splitIdx)
+  const password = userpass.slice(splitIdx + 1)
+  if (username !== 'username' || password !== 'password') {
+    return reject(res)
+  }
 
   res.send('OK')
 
