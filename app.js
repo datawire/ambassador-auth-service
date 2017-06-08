@@ -14,10 +14,17 @@ app.post('/post', parser, function (req, res) {
   const headers = req.body
   console.log('\nNew request with ' + Object.keys(headers).length + ' headers.')
 
+  console.log('My Headers >>>')
+  console.log(req.headers)
+  console.log('Headers for auth >>>')
+  console.log(headers)
+  console.log('----')
+
   // Does this call need auth?
   const path = headers[':path']
   console.log('Got :path [' + path + ']')
   if (!path || !path.startsWith('/service')) {
+    console.log("OK, not /service");
     res.send('OK')
     return
   }
@@ -28,6 +35,7 @@ app.post('/post', parser, function (req, res) {
   const auth = headers['authorization']
   console.log('Got auth [' + auth + ']')
   if (!auth || !auth.startsWith('Basic ')) {
+    console.log("reject, not Basic Auth");
     return reject(res)
   }
 
@@ -37,6 +45,7 @@ app.post('/post', parser, function (req, res) {
   console.log('Auth decodes to [' + userpass + ']')
   if (splitIdx < 1) {
     // No colon or empty username
+    console.log("reject, bad format");
     return reject(res)
   }
 
@@ -45,18 +54,12 @@ app.post('/post', parser, function (req, res) {
   const username = userpass.slice(0, splitIdx)
   const password = userpass.slice(splitIdx + 1)
   if (username !== 'username' || password !== 'password') {
+    console.log("reject, invalid user");
     return reject(res)
   }
 
+  console.log("OK, good user");
   res.send('OK')
-
-  /*
-  console.log('My Headers >>>')
-  console.log(req.headers)
-  console.log('Headers for auth >>>')
-  console.log(headers)
-  console.log('----')
-  */
 })
 
 app.listen(3000, function () {
