@@ -14,5 +14,9 @@
   },
   "devDependencies": {
     "standard": "^10.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datawire/ambassador-auth-service"
   }
 }
