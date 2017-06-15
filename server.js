@@ -24,18 +24,18 @@ app.post('/post', parser, function (req, res) {
   const path = headers[':path']
   console.log('Got :path [' + path + ']')
   if (!path || !path.startsWith('/service')) {
-    console.log("OK, not /service");
+    console.log('OK, not /service')
     res.send('OK')
     return
   }
 
   // FUTURE: Check for and validate JWT in some header
 
-  // Does this call have an basic auth header?
+  // Does this call have a basic auth header?
   const auth = headers['authorization']
   console.log('Got auth [' + auth + ']')
   if (!auth || !auth.startsWith('Basic ')) {
-    console.log("reject, not Basic Auth");
+    console.log('reject, not Basic Auth')
     return reject(res)
   }
 
@@ -45,7 +45,7 @@ app.post('/post', parser, function (req, res) {
   console.log('Auth decodes to [' + userpass + ']')
   if (splitIdx < 1) {
     // No colon or empty username
-    console.log("reject, bad format");
+    console.log('reject, bad format')
     return reject(res)
   }
 
@@ -54,11 +54,11 @@ app.post('/post', parser, function (req, res) {
   const username = userpass.slice(0, splitIdx)
   const password = userpass.slice(splitIdx + 1)
   if (username !== 'username' || password !== 'password') {
-    console.log("reject, invalid user");
+    console.log('reject, invalid user')
     return reject(res)
   }
 
-  console.log("OK, good user");
+  console.log('OK, good user')
   res.send('OK')
 })
 
