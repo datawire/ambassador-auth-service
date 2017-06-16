@@ -9,7 +9,7 @@ function reject (res) {
   res.status(401).end()
 }
 
-app.post('/post', parser, function (req, res) {
+app.post('/ambassador/auth', parser, function (req, res) {
   // Headers we look at to figure out auth
   const headers = req.body
   console.log('\nNew request with ' + Object.keys(headers).length + ' headers.')
