@@ -60,7 +60,7 @@ The example service requires a recent version of Node that supports `const`.
 
 ### Run using Kubernetes
 
-    This assumes your `kubectl` command is set up to point to your Kubernetes cluster already.
+This assumes your `kubectl` command is set up to point to your Kubernetes cluster already.
 
     $ kubectl apply -f example-auth.yaml
     service "example-auth" created
