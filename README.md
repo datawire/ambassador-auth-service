@@ -57,3 +57,18 @@ The example service requires a recent version of Node that supports `const`.
 
     Example app listening on port 3000!
 
+
+### Run using Kubernetes
+
+    This assumes your `kubectl` command is set up to point to your Kubernetes cluster already.
+
+    $ kubectl apply -f example-auth.yaml
+    service "example-auth" created
+    deployment "example-auth" created
+
+    $ kubectl logs example-auth-2014484287-034kz
+
+    > authserver@1.0.0 start /src
+    > node server.js
+
+    Example app listening on port 3000!
