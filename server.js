@@ -23,69 +23,65 @@
 */
 
 const express = require('express')
-const bodyParser = require('body-parser')
 const app = express()
 
-const parser = bodyParser.json()
+// Set up authentication middleware
+const basicAuth = require('express-basic-auth')
+const authenticate = basicAuth({
+  'users': { 'username': 'password' },
+  'challenge': true,
+  'realm': 'Ambassador Realm'
+})
 
-function reject (res) {
-  res.set('WWW-Authenticate', 'Basic realm="Ambassador Realm"')
-  res.status(401).end()
-}
+// Add verbose logging of requests (see below)
+app.use(logRequests)
 
-app.post('/ambassador/auth', parser, function (req, res) {
-  // Headers we look at to figure out auth
-  const headers = req.body
-  console.log('\nNew request with ' + Object.keys(headers).length + ' headers.')
+// Require authentication for /service requests
+app.all('/service', authenticate, function (req, res) {
+  res.send('OK (authenticated)')
+})
 
-  console.log('My Headers >>>')
-  console.log(req.headers)
-  console.log('Headers for auth >>>')
-  console.log(headers)
-  console.log('----')
-
-  // Does this call need auth?
-  const path = headers[':path']
-  console.log('Got :path [' + path + ']')
-  if (!path || !path.startsWith('/service')) {
-    console.log('OK, not /service')
-    res.send('OK')
-    return
-  }
-
-  // FUTURE: Check for and validate JWT in some header
-
-  // Does this call have a basic auth header?
-  const auth = headers['authorization']
-  console.log('Got auth [' + auth + ']')
-  if (!auth || !auth.startsWith('Basic ')) {
-    console.log('reject, not Basic Auth')
-    return reject(res)
-  }
-
-  // Does the header contain a username and password?
-  const userpass = Buffer.from(auth.slice(6), 'base64').toString()
-  const splitIdx = userpass.search(':')
-  console.log('Auth decodes to [' + userpass + ']')
-  if (splitIdx < 1) {
-    // No colon or empty username
-    console.log('reject, bad format')
-    return reject(res)
-  }
-
-  // Is the username and password pair valid?
-  // TODO(ark3): Validate properly!
-  const username = userpass.slice(0, splitIdx)
-  const password = userpass.slice(splitIdx + 1)
-  if (username !== 'username' || password !== 'password') {
-    console.log('reject, invalid user')
-    return reject(res)
-  }
-
-  console.log('OK, good user')
-  res.send('OK')
+// Everything else is okay without auth
+app.all('*', function (req, res) {
+  res.send('OK (not /service)')
 })
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('Subrequest auth server sample listening on port 3000')
 })
+
+// Middleware to log requests, including basic auth header info
+function logRequests (req, res, next) {
+  console.log('\nNew request')
+  console.log(`  Path: ${req.path}`)
+  console.log('  Incoming headers >>>')
+  Object.entries(req.headers).forEach(
+    ([key, value]) => console.log(`    ${key}: ${value}`)
+  )
+
+  // Check for expected authorization header
+  const auth = req.headers['authorization']
+  if (!auth) {
+    console.log('  No authorization header')
+    return next()
+  }
+  if (!auth.toLowerCase().startsWith('basic ')) {
+    console.log('  Not Basic Auth')
+    return next()
+  }
+
+  // Parse authorization header
+  const userpass = Buffer.from(auth.slice(6), 'base64').toString()
+  console.log(`  Auth decodes to "${userpass}"`)
+  const splitIdx = userpass.search(':')
+  if (splitIdx < 1) {  // No colon or empty username
+    console.log('  Bad authorization format')
+    return next()
+  }
+
+  // Extract username and password pair
+  const username = userpass.slice(0, splitIdx)
+  const password = userpass.slice(splitIdx + 1)
+  console.log(`  Auth user="${username}" pass="${password}"`)
+  return next()
+}

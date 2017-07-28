@@ -2,15 +2,15 @@
   "name": "authserver",
   "version": "1.0.0",
   "description": "Auth Server for Envoy ExtAuth",
-  "main": "app.js",
+  "author": "Datawire",
+  "license": "Apache-2.0",
+  "main": "server.js",
   "scripts": {
     "test": "standard"
   },
-  "author": "Datawire",
-  "license": "Apache-2.0",
   "dependencies": {
-    "body-parser": "^1.17.2",
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "express-basic-auth": "^1.1.1"
   },
   "devDependencies": {
     "standard": "^10.0.2"
