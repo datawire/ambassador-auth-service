@@ -37,7 +37,7 @@ const authenticate = basicAuth({
 app.use(logRequests)
 
 // Require authentication for /service requests
-app.all('/service', authenticate, function (req, res) {
+app.all('/service*', authenticate, function (req, res) {
   res.send('OK (authenticated)')
 })
 
