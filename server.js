@@ -24,7 +24,7 @@
 
 const express = require('express')
 const app = express()
-const addRequestId = require('express-request-id')();
+const addRequestId = require('express-request-id')()
 
 // Set up authentication middleware
 const basicAuth = require('express-basic-auth')
@@ -35,29 +35,29 @@ const authenticate = basicAuth({
 })
 
 // Always have a request ID.
-app.use(addRequestId);
+app.use(addRequestId)
 
 // Add verbose logging of requests (see below)
-app.use(logRequests);
+app.use(logRequests)
 
-// Require authentication for /service requests
+// Require authentication for /extauth/service requests
 app.all('/extauth/service*', authenticate, function (req, res) {
-  var session = req.headers['x-qotm-session'];
+  var session = req.headers['x-qotm-session']
 
   if (!session) {
-    console.log(`creating x-qotm-session: ${req.id}`);
-    session = req.id;
-    res.set('x-qotm-session', session);
+    console.log(`creating x-qotm-session: ${req.id}`)
+    session = req.id
+    res.set('x-qotm-session', session)
   }
 
-  console.log(`allowing QotM request, session ${session}`);
+  console.log(`allowing QotM request, session ${session}`)
   res.send('OK (authenticated)')
 })
 
 // Everything else is okay without auth
 app.all('*', function (req, res) {
-  console.log(`Allowing request to ${req.path}`);
-  res.send('OK (not /service)');
+  console.log(`Allowing request to ${req.path}`)
+  res.send('OK (not /service)')
 })
 
 app.listen(3000, function () {
