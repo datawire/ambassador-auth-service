@@ -1,8 +1,13 @@
+# !!!! This doesn't really play nicely with travis-build.sh yet.
+
 VERSION=$(shell python -c 'import json; print(json.load(open("package.json", "r"))["version"])')
 
 .ALWAYS:
 
-all: docker-image example-auth.yaml
+all: warning docker-image example-auth.yaml
+
+warning: .ALWAYS
+	@echo '!!!!!! THIS MAKEFILE NEEDS TO PLAY MORE NICELY WITH travis-build.sh !!!!!!' >&2
 
 docker-image: check-registry
 	docker build -t $(DOCKER_REGISTRY)/ambassador-auth-service:$(VERSION) .
