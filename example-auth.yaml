@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: example-auth
-        image: datawire/ambassador-auth-service:1.1.0
+        image: dwflynn/ambassador-auth-service:1.1.1
         imagePullPolicy: Always
         ports:
         - name: http-api

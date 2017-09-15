@@ -40,8 +40,8 @@ app.use(addRequestId)
 // Add verbose logging of requests (see below)
 app.use(logRequests)
 
-// Require authentication for /extauth/service requests
-app.all('/extauth/service*', authenticate, function (req, res) {
+// Require authentication for /extauth/qotm/quote requests
+app.all('/extauth/qotm/quote*', authenticate, function (req, res) {
   var session = req.headers['x-qotm-session']
 
   if (!session) {
@@ -57,7 +57,7 @@ app.all('/extauth/service*', authenticate, function (req, res) {
 // Everything else is okay without auth
 app.all('*', function (req, res) {
   console.log(`Allowing request to ${req.path}`)
-  res.send('OK (not /service)')
+  res.send('OK (not /qotm/quote)')
 })
 
 app.listen(3000, function () {
