@@ -40,8 +40,14 @@ app.use(addRequestId)
 // Add verbose logging of requests (see below)
 app.use(logRequests)
 
-// Require authentication for /extauth/backend/get-quote/ requests
-app.all('/extauth/backend/get-quote*', authenticate, function (req, res) {
+// Get authentication path from env, default to /extauth/backend/get-quote
+var authPath = '/extauth/backend/get-quote'
+if (process.env.AUTH_PATH) {
+  authPath = process.env.AUTH_PATH
+}
+
+// Require authentication for authPath requests
+app.all(authPath.concat('*'), authenticate, function (req, res) {
   var session = req.headers['x-qotm-session']
 
   if (!session) {

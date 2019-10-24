@@ -11,7 +11,7 @@ Example auth service for [Ambassador][ag] using [ExtAuth][ae]. See the [Ambassad
 
 The service listens on port 3000 and supports the ExtAuth interaction pattern. In short, the service expects a POST to the path `/ambassador/auth` with client request headers as a JSON map in the POST body. If auth is okay, it returns a 200 to allow the client request to go through. Otherwise it returns a 401 with an HTTP Basic Auth WWW-Authenticate header. Take a look at [ExtAuth][ae] for more information about the Envoy side of things.
 
-The current version of this code only performs auth when the client headers indicate a request under the `/service` path. The only valid credentials are `username:password`. It should be straightforward to extend this sample to perform meaningful auth.
+By default, this code only performs auth when the client headers indicate a request under the `extauth/backend/get-quote` path. This path can be tweaked via the `AUTH_PATH` environment variable. The only valid credentials are `username:password`. It should be straightforward to extend this sample to perform meaningful auth.
 
 
 ### Run using Node
