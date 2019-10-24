@@ -45,6 +45,7 @@ var authPath = '/extauth/backend/get-quote'
 if ('AUTH_PATH' in process.env) {
   authPath = process.env.AUTH_PATH
 }
+console.log(`setting authenticated path to: ${authPath}`)
 
 // Require authentication for authPath requests
 app.all(authPath.concat('*'), authenticate, function (req, res) {
@@ -63,7 +64,7 @@ app.all(authPath.concat('*'), authenticate, function (req, res) {
 // Everything else is okay without auth
 app.all('*', function (req, res) {
   console.log(`Allowing request to ${req.path}`)
-  res.send('OK (not /backend/get-quote)')
+  res.send(`OK (not ${authPath})`)
 })
 
 app.listen(3000, function () {
