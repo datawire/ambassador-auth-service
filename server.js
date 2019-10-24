@@ -42,7 +42,7 @@ app.use(logRequests)
 
 // Get authentication path from env, default to /extauth/backend/get-quote
 var authPath = '/extauth/backend/get-quote'
-if (process.env.AUTH_PATH) {
+if ('AUTH_PATH' in process.env) {
   authPath = process.env.AUTH_PATH
 }
 
